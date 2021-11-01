@@ -1,0 +1,24 @@
+[package]
+name = "shared"
+version = "0.1.0"
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+#[lib]
+#name = "runity"
+#crate-type = ["dylib"]
+
+[dependencies]
+cgmath = "0.18.0"
+rand = "0.8.4"
+log = "*"
+simplelog = "*"
+lazy_static= "*"
+#bevy_ecs = "0.5"
+#bevy_app = "0.5"
+
+bevy = { git = "https://github.com/bevyengine/bevy", rev = "6a8a8c9d21f32e0e46623db9438813b009f9e014", default-features = false}
+
+dlopen = "0.1.8"
+dlopen_derive = "0.1.4"

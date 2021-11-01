@@ -1,0 +1,29 @@
+[package]
+name = "allprojects"
+version = "0.1.0"
+edition = "2018"
+
+[workspace]
+members = ["runity","game","shared"]
+
+#[lib]
+#name = "runity"
+#crate-type = ["dylib"]
+#
+#[dependencies]
+#cgmath = "0.18.0"
+#rand = "0.8.4"
+#log = "*"
+#simplelog = "*"
+#lazy_static= "*"
+#bevy_ecs = "0.5"
+
+[lib]
+name = "runity"
+crate-type = ["dylib"]
+path = "runity/"
+
+#[lib]
+#name = "game"
+#crate-type = ["dylib"]
+#path = "game/"
