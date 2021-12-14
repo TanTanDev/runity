@@ -6,18 +6,15 @@ Highly experimental Rust implementation for Unity.
 Utilizing Bevy's entity component system, we can write code like any other Bevy project,
 but use Unity as the runtime.
 
-### How it works
-  ##### Runity Unity plugin
-    Responsible for loading the runity.dll. All C# & Rust communication goes through these scripts.
+### Runity features:
+This is Runity currently capable of controlling from Rust to Unity
+1. spawn prefab
+2. spawn prefab as a child of another game object
+3. destroy prefab
+4. process collision events (very barebones)
+5. modify transform position
+6. modify TextMesh text
 
-  ##### runity.dll
-    Handles all C# communication, responsible for the Bevy world. Loads and communicates with the game code 'game.dll'.
-    Bevy systems are setup to sync the Rust side into C#.
-    Because of the 'ugly' FFI nature of code I seperated the game code with the communication code
-    
-  ##### game.dll 'renamable'
-    Game specific code
-    
 ### how to build
   I currently don't provide a unity demo project, but I have some example code in rust/demo_game.
   If you follow these instructions the game code will expect you to setup 2 ScriptablePrefabs called 'monkey' and 'banana'
@@ -30,15 +27,18 @@ but use Unity as the runtime.
   3. move 'runity.dll' into the unity project, where you placed the runity plugin (unity_project/assets/plugins/runity/runity.dll)
   4. move 'demo_game.dll' into the root of the unity project (unity_project/)
 
+### How it works
+  ##### Runity Unity plugin
+    Responsible for loading the runity.dll. All C# & Rust communication goes through these scripts.
 
-### Runity features:
-This is Runity currently capable of controlling from Rust to Unity
-1. spawn prefab
-2. spawn prefab as a child of another game object
-3. destroy prefab
-4. process collision events (very barebones)
-5. modify transform position
-6. modify TextMesh text
+  ##### runity.dll
+    Handles all C# communication, responsible for the Bevy world. Loads and communicates with the game code 'game.dll'.
+    Bevy systems are setup to sync the Rust side into C#.
+    Because of the 'ugly' FFI nature of code I seperated the game code with the communication code
+    
+  ##### game.dll 'renamable'
+    Game specific code
+    
 
 ### Areas of improvement
 Some ideas I got that needs to be improved
