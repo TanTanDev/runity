@@ -74,7 +74,6 @@ impl Api {
     let mut api = API.lock().unwrap();
     if let Some(mut rust_plugin) = api.game.rust_plugin.take() {
         api.game.update_bevy_world();
-        rust_plugin.update(time, &mut api.game.app);
         api.game.rust_plugin = Some(rust_plugin);
     }
 

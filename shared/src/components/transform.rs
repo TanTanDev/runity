@@ -15,21 +15,20 @@ impl Into<CTransform> for Transform {
     fn into(self) -> CTransform {
         CTransform {
   //          position: CVector{
-                x: self.position.x as i32,
-                y: self.position.y as i32,
-                z: self.position.x as i32,
+                x: self.position.x,
+                y: self.position.y,
+                z: self.position.z,
    //         },
         }
     }
 }
 
 #[repr(C)]
-//#[derive(Copy, Clone, Debug)]
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct CTransform {
-    pub x: i32,
-    pub y: i32,
-    pub z: i32,
+    pub x: f32,
+    pub y: f32,
+    pub z: f32,
 } 
 
 // #[repr(C)]
@@ -53,11 +52,12 @@ pub fn upload_component_transform_system(
 ) {
     // reset prefab existance flags
     for (entity, transform) in prefab_with_transform.iter() {
-        debug!("telling unity to sync transform with gameobject id: {}", entity.id());
-        let test: CTransform = (*transform).into();
-        debug!("transform data: {:?}", test);
         let transform: CTransform = (*transform).into();
-        world_link.upload_component_transform(entity.id(), transform);
-        debug!("we survived?");
+        let transform_ptr = Box::into_raw(Box::new(transform));
+        world_link.upload_component_transform(entity.to_bits(), transform_ptr);
+        // drop the value
+        unsafe {
+            let _drop_transform = Box::from_raw(transform_ptr);
+        }
     }
 }

@@ -5,4 +5,7 @@ pub mod components;
 pub mod types;
 pub mod world_link;
 pub mod bevy_app_syncable;
+pub mod bevy_plugin_syncable;
 pub mod core_stage;
+pub mod data;
+pub mod utils;

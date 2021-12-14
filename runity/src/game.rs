@@ -4,6 +4,8 @@ use dlopen::wrapper::{Container, WrapperApi};
 use dlopen::symbor::SymBorApi;
 use log::{debug, error, info};
 use shared::bevy_app_syncable::App;
+use shared::components::collision::{collision_clear_events_system, sync_collision_added};
+use shared::components::textmeshui::upload_component_textmeshui_system;
 use shared::components::transform::upload_component_transform_system;
 use shared::world_link::WorldLink;
 use shared::{plugin::{self, Plugin}, time::Time};
@@ -57,9 +59,20 @@ impl Game {
     }
 
     pub fn setup_bevy_world(&mut self) {
-        //self.app.add_system_to_stage(shared::core_stage::CoreStage::UploadToUnity, sync_spawned_entitites.label("s_s_e"));
-        //self.app.add_system_to_stage(shared::core_stage::CoreStage::UploadToUnity, sync_despawned_entitites.label("s_d_e").after("s_s_e"));
-        self.app.add_system_to_stage(shared::core_stage::CoreStage::UploadToUnity, upload_component_transform_system.label("u_c_t"));
+        debug!("setting up bevy world");
+        self.app.add_system_to_stage(shared::core_stage::CoreStage::UploadToUnity, sync_spawned_entitites_with_transform.exclusive_system());
+        self.app.add_system_to_stage(shared::core_stage::CoreStage::UploadToUnity, sync_spawned_entitites_without_transform.exclusive_system());
+        self.app.add_system_to_stage(shared::core_stage::CoreStage::UploadToUnity, sync_despawned_entitites);
+        self.app.add_system_to_stage(shared::core_stage::CoreStage::UploadToUnity, upload_component_transform_system);
+        self.app.add_system_to_stage(shared::core_stage::CoreStage::UploadToUnity, upload_component_textmeshui_system);
+        self.app.add_system_to_stage(shared::core_stage::CoreStage::LateUploadToUnity, sync_collision_added);
+        self.app.add_system_to_stage(shared::core_stage::CoreStage::LateUploadToUnity, collision_clear_events_system);
+        // childed entities is uploaded in a later stage,
+        // because the parent must be uploaded before the child can find the parent 
+        // this can still cause issue if we are parenting 2 times.
+        // entities ideally should be sent queued based on their hiearchy position, 'insert curse word'
+        self.app.add_system_to_stage(shared::core_stage::CoreStage::LateUploadToUnity, sync_spawned_entitites_with_transform_and_parent.exclusive_system().label("s_s_e_w_t_a_p"));
+
         match WorldLink::new("runity.dll") {
             Ok(world_link) => {
                 self.app.insert_resource(world_link);
@@ -71,7 +84,7 @@ impl Game {
         self.app.insert_resource(PrefabEntityTracker(HashMap::with_capacity(2)));
         use bevy::core::Time;
         let mut time = Time::default();
-        // 0 first frame delta_time
+        // zero first frame delta_time
         time.update();
         self.app.insert_resource(time);
         self.app.add_system_to_stage(shared::core_stage::CoreStage::First, (|mut time: ResMut<Time>| time.update()).exclusive_system());
@@ -88,7 +101,6 @@ impl Game {
         }
         match RustConnection::new(lib_name) {
             Ok(rust_connection) => {
-                debug!("setting up bevy world");
                 self.setup_bevy_world();
                 debug!("creating game dll link");
                 let plugin_ptr = rust_connection._plugin_create();

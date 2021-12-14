@@ -1,8 +1,9 @@
-// this is a modified versio nof bevy's app
-// modified by removing the runner so app can be sent accros threads
+// this is a modified version of bevy's app
+// modified by removing the runner so app can be sent accross threads
+// because I'm utilizing lazy statics so much
 
 use bevy::app::{Events, PluginGroupBuilder};
-use bevy::prelude::{Plugin, PluginGroup, StartupStage};
+use bevy::prelude::{PluginGroup, StartupStage};
 use bevy::ecs::{
     prelude::{FromWorld, IntoExclusiveSystem},
     schedule::{
@@ -15,6 +16,7 @@ use bevy::ecs::{
 use bevy::utils::tracing::debug;
 use std::fmt::Debug;
 use crate::core_stage::CoreStage;
+use crate::bevy_plugin_syncable::Plugin;
 
 #[cfg(feature = "trace")]
 use bevy_utils::tracing::info_span;
@@ -328,6 +330,7 @@ impl App {
         stage_label: impl StageLabel,
         system: impl IntoSystemDescriptor<Params>,
     ) -> &mut Self {
+        self.schedule.iter_stages().for_each(|stage| log::debug!("here is a stage: {:?}", stage.0));
         self.schedule.add_system_to_stage(stage_label, system);
         self
     }
@@ -550,6 +553,7 @@ impl App {
             .add_stage(CoreStage::PostUpdate, SystemStage::parallel())
             .add_stage(CoreStage::Last, SystemStage::parallel())
             .add_stage(CoreStage::UploadToUnity, SystemStage::single_threaded())
+            .add_stage(CoreStage::LateUploadToUnity, SystemStage::single_threaded())
     }
 
     /// Setup the application to manage events of type `T`.
@@ -695,14 +699,14 @@ impl App {
     // /// #
     // /// App::new().add_plugin(bevy_log::LogPlugin::default());
     // /// ```
-    // pub fn add_plugin<T>(&mut self, plugin: T) -> &mut Self
-    // where
-    //     T: Plugin,
-    // {
-    //     debug!("added plugin: {}", plugin.name());
-    //     plugin.build(self);
-    //     self
-    // }
+    pub fn add_plugin<T>(&mut self, plugin: T) -> &mut Self
+    where
+        T: Plugin,
+    {
+        debug!("added plugin: {}", plugin.name());
+        plugin.build(self);
+        self
+    }
 
     // /// Adds a group of plugins
     // ///

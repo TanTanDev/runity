@@ -58,6 +58,7 @@ impl log::Log for UnityLogger {
         if !self.enabled(record.metadata()){
             return;
         }
+
         // todo: SHOULD NOT TRY_LOCK, But have to because function within API, can't log currently
         if let Ok(u_logger) = UNITY_LOGGER_CALLBACK.try_lock() {
             (u_logger.cb_log)(LogMessage::new(record));

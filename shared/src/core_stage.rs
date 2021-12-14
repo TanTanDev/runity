@@ -22,6 +22,7 @@ pub enum CoreStage {
     /// Name of app stage that runs after all other app stages
     Last,
     /// the last stage is to send to unity
-    /// calls into unity must be singlethreaded, very important
+    /// calls into unity must be single threaded, very important
     UploadToUnity,
+    LateUploadToUnity,
 }

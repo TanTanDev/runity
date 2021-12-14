@@ -4,7 +4,7 @@ version = "0.1.0"
 edition = "2018"
 
 [workspace]
-members = ["runity","game","shared"]
+members = ["runity","game","shared", "demo_game"]
 
 #[lib]
 #name = "runity"

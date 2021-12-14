@@ -1,10 +1,7 @@
 use std::any::Any;
 
-use crate::time::Time;
-
 pub trait Plugin: Any + Send + Sync {
     fn init(&mut self, app: &mut crate::bevy_app_syncable::App);
-    fn update(&mut self, time: Time, world: &mut crate::bevy_app_syncable::App);
 }
 
 // setup dll bindings
