@@ -27,6 +27,11 @@ This is Runity currently capable of controlling from Rust to Unity
   3. move 'runity.dll' into the unity project, where you placed the runity plugin (unity_project/assets/plugins/runity/runity.dll)
   4. move 'demo_game.dll' into the root of the unity project (unity_project/)
 
+### What is up with game folder and demo_game?
+the game folder was the spike game for the video.
+There you can find some example code on how I handled collision and text as you can see in the video I made about this project.
+demo_game was the code for the small monkey banana project I also showed in my video.
+
 ### How it works
   ##### Runity Unity plugin
     Responsible for loading the runity.dll. All C# & Rust communication goes through these scripts.
