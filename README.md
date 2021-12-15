@@ -6,6 +6,9 @@ Highly experimental Rust implementation for Unity.
 Utilizing Bevy's entity component system, we can write code like any other Bevy project,
 but use Unity as the runtime.
 
+I documented the creation of this project on my youtube channel called Tantan:
+https://youtu.be/L7M_vbo1N2g 
+
 ### Runity features:
 This is Runity currently capable of controlling from Rust to Unity
 1. spawn prefab
